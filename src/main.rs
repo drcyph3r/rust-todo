@@ -1,3 +1,7 @@
+use std::env;
+
 fn main() {
-    println!("Hello, world!");
+    let arg: Vec<String> = env::args().collect();
+    let command = &arg[1];
+    println!("{:#?}", command);
 }
