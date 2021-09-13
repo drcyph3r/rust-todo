@@ -5,17 +5,23 @@ struct TodoItem {
     completed: char
 }
 
+impl TodoItem {
+    fn create(name: String) -> TodoItem {
+       return TodoItem {
+            name: name,
+            completed: ' ',
+        }
+    }
+}
+
 fn main() {
     let arg: Vec<String> = env::args().collect();
     let command = &arg[1];
 
     // example todo
-    let todo_item = TodoItem {
-        name: "Go thru the solana docs".to_string(),
-        completed: ' '
-    };
+    let todo_item_1 = TodoItem::create("Go thru the solana docs.".to_string());
 
-    let todo_list = vec![todo_item];
+    let todo_list = vec![todo_item_1];
     
     match command.as_str() {
         "get" => {
