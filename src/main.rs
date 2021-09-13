@@ -11,7 +11,7 @@ struct TodoList {
 
 impl TodoItem {
     fn create(name: String) -> TodoItem {
-       return TodoItem {
+        TodoItem {
             name: name,
             completed: ' ',
         }
@@ -21,7 +21,7 @@ impl TodoItem {
 impl TodoList {
     // create a new list
     fn new() -> TodoList {
-        return TodoList{list: Vec::new()};
+        TodoList{list: Vec::new()}
     }
 
     // add todo item to list
@@ -30,32 +30,58 @@ impl TodoList {
         self.list.push(item);
     }
 
+    fn remove(&mut self, index: usize) {
+        self.list.remove(index);
+    }
+
+    fn done(&mut self, index: usize) {
+        self.list[index].completed = 'x';
+    }
+
     // display todo list
     fn display(&self) {
-        for item in &self.list {
-            println!("[{}] - {}", item.completed, item.name);
+        for (index, item) in self.list.iter().enumerate() {
+            println!("{} [{}] - {}", index, item.completed, item.name);
         }
     }
+}
+
+enum Command {
+    Get,
+    Add(String),
+    Done(usize),
+    Remove(usize),
 }
 
 fn main() {
     // collect the arguments from command line
     let arg: Vec<String> = env::args().collect();
     // extract the command from the arguments
-    let command = &arg[1];
+    let command = match arg[1].as_str() {
+        "get" => Command::Get,
+        "add" => Command::Add(arg[2].clone()),
+        "done" => Command::Done(arg[2].parse::<usize>().expect("error parsing the item index")),
+        "remove" => Command::Remove(arg[2].parse::<usize>().expect("error parsing the item index")),
+        _ => panic!("Invalid todo command.")
+    };
 
     // initialize the empty todo list
-    let todo_list = TodoList::new();
+    let mut todo_list = TodoList::new();
     
     // do todo operations according to command received
-    match command.as_str() {
-        "get" => {
-            todo_list.display()
+    match command {
+        Command::Get => todo_list.display(),
+        Command::Add(item) => {
+            todo_list.add(item);
+            todo_list.display();
         },
-        "add" => {
-
+        Command::Done(index) => {
+            todo_list.done(index);
+            todo_list.display();
         },
-        _ => return (),
+        Command::Remove(index) => {
+            todo_list.remove(index);
+            todo_list.display();
+        }
     }
 }
- 
